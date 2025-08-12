@@ -205,12 +205,14 @@
       position: relative;
       background: white;
       border-radius: 15px;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: hidden;
       box-shadow: 0 12px 40px rgba(16, 185, 129, 0.25);
+      -webkit-overflow-scrolling: touch;
     }
     
     iframe {
-      width: 100%;
+      width: 2000px;
       height: 600px;
       border: none;
       transition: opacity 0.3s ease;
@@ -286,7 +288,7 @@
           gid = '402499405'; // Overall
       }
       
-      const newUrl = `${baseUrl}?gid=${gid}&single=true&widget=true&headers=false&range=A1:AZ100`;
+      const newUrl = `${baseUrl}?gid=${gid}&single=true&widget=true&headers=false&range=A1:AZ100&chrome=false&rm=minimal`;
       document.getElementById('fdr-iframe').src = newUrl;
       
       // Add a subtle loading effect
