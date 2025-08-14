@@ -1,83 +1,356 @@
-<header>
-  <img src="Screenshot 2025-08-11 141621.png" alt="PL Oracles Logo" />
-  <h1>PL Oracles</h1>
-  <nav>
-    <button onclick="scrollToSection('about-us')">About Us</button>
-    <button onclick="scrollToSection('fdr-container')">FDR</button>
-    <button onclick="scrollToSection('xg-container')">xG PDFs</button>
-    <button onclick="window.open('https://instagram.com/ploracles', '_blank')">Instagram</button>
-  </nav>
-</header>
-
-<main>
-  <!-- Existing FDR section ... -->
-
-  <!-- New xG Probability Distribution Functions Section -->
-  <section id="xg-container">
-    <h2 style="color: #064e3b; font-size: 2rem; margin-bottom: 20px; text-align: center;">
-      xG Probability Distribution Functions
-    </h2>
-    
-    <div class="fdr-controls">
-      <div class="control-group">
-        <label for="team-select">Select Team:</label>
-        <select id="team-select" onchange="updateXGPDF()">
-          <option value="team1">Arsenal</option>
-          <option value="team2">Manchester City</option>
-          <option value="team3">Liverpool</option>
-          <option value="team4">Chelsea</option>
-          <!-- Add all other teams here -->
-        </select>
-      </div>
-    </div>
-
-    <div id="xg-table-container">
-      <iframe 
-        id="xg-iframe"
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSmPzoWoTbubQbzs2rJkyfalJ0uDwVYW62_umcmTZvU1VQyrRZ6mOd3AqQMUAtuToafTaOU0N193xEc/pubhtml?gid=0&single=true&widget=true&headers=false" 
-        frameborder="0" 
-        scrolling="yes"
-      ></iframe>
-    </div>
-  </section>
-</main>
-
-<script>
-  function updateXGPDF() {
-    const team = document.getElementById('team-select').value;
-    let gid;
-
-    switch(team) {
-      case 'team1':
-        gid = '0'; // Arsenal tab
-        break;
-      case 'team2':
-        gid = '123456789'; // Manchester City tab
-        break;
-      case 'team3':
-        gid = '987654321'; // Liverpool tab
-        break;
-      case 'team4':
-        gid = '555555555'; // Chelsea tab
-        break;
-      // Add other teams with their sheet GIDs
-      default:
-        gid = '0';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PL Oracles - FDR & xG PDFs</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      color: #064e3b;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 4px 20px rgba(5, 150, 105, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+    header img {
+      height: 50px;
+      margin-right: 15px;
+    }
+    header h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin: 0;
+      flex-grow: 1;
+    }
+    nav {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    nav button {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      border: none;
+      color: #064e3b;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(52, 211, 153, 0.4);
+      transition: all 0.3s ease;
+    }
+    nav button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(52, 211, 153, 0.5);
+    }
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 15px;
+      min-height: 600px;
     }
 
-    const baseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmPzoWoTbubQbzs2rJkyfalJ0uDwVYW62_umcmTZvU1VQyrRZ6mOd3AqQMUAtuToafTaOU0N193xEc/pubhtml";
-    const newUrl = `${baseUrl}?gid=${gid}&single=true&widget=true&headers=false&range=A1:AZ100&chrome=false&rm=minimal`;
+    /* Section Styles */
+    #about-us {
+      font-size: 1.1rem;
+      color: #064e3b;
+      line-height: 1.6;
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid #10b981;
+      box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+      margin-bottom: 50px;
+    }
+    .fdr-controls {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      padding: 20px;
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      border-radius: 15px;
+      border: 1px solid #10b981;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .control-group label {
+      font-weight: 600;
+      color: #064e3b;
+      font-size: 0.9rem;
+    }
+    .control-group select,
+    .control-group input {
+      padding: 8px 12px;
+      border: 2px solid #10b981;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: white;
+      color: #064e3b;
+      font-weight: 500;
+    }
+    .control-group select:focus,
+    .control-group input:focus {
+      outline: none;
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+    #fdr-table-container,
+    #xg-table-container {
+      position: relative;
+      background: white;
+      border-radius: 15px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      box-shadow: 0 12px 40px rgba(16, 185, 129, 0.25);
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 50px;
+    }
+    iframe {
+      width: 2000px;
+      height: 600px;
+      border: none;
+      transition: opacity 0.3s ease;
+    }
 
-    const iframe = document.getElementById('xg-iframe');
-    iframe.src = newUrl;
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        padding: 8px 15px;
+        flex-direction: column;
+        gap: 10px;
+      }
+      header h1 {
+        font-size: 1.4rem;
+        text-align: center;
+      }
+      nav {
+        justify-content: center;
+        gap: 10px;
+      }
+      nav button {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+      }
+      main {
+        margin: 15px auto;
+        padding: 0 10px;
+      }
+      #about-us {
+        padding: 20px;
+        font-size: 1rem;
+      }
+      .fdr-controls {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+      }
+      .control-group select {
+        width: 100%;
+        max-width: 200px;
+      }
+      iframe {
+        height: 400px;
+      }
+    }
+    @media (max-width: 480px) {
+      header {
+        padding: 6px 10px;
+      }
+      header h1 {
+        font-size: 1.2rem;
+      }
+      nav button {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+      }
+      main {
+        padding: 0 5px;
+      }
+      #about-us {
+        padding: 15px;
+        font-size: 0.95rem;
+      }
+      .fdr-controls {
+        padding: 10px;
+      }
+      iframe {
+        height: 350px;
+      }
+      h2 {
+        font-size: 1.5rem !important;
+      }
+    }
+  </style>
+</head>
+<body>
 
-    // Subtle loading effect
-    iframe.style.opacity = '0.7';
-    setTimeout(() => iframe.style.opacity = '1', 500);
-  }
+  <header>
+    <img src="Screenshot 2025-08-11 141621.png" alt="PL Oracles Logo" />
+    <h1>PL Oracles</h1>
+    <nav>
+      <button onclick="scrollToSection('about-us')">About Us</button>
+      <button onclick="scrollToSection('fdr-container')">FDR</button>
+      <button onclick="scrollToSection('xg-container')">xG PDFs</button>
+      <button onclick="window.open('https://instagram.com/ploracles', '_blank')">Instagram</button>
+    </nav>
+  </header>
 
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    updateXGPDF();
-  });
-</script>
+  <main>
+    <!-- About Us -->
+    <section id="about-us">
+      <p>
+        We are a team of students and FPL enthusiasts who were bored of all the expensive models out there, so we decided to create our own FPL model — PL Oracles. Our mission is to provide transparent, accessible, and accurate tools for Fantasy Premier League managers everywhere.
+      </p>
+    </section>
+
+    <!-- FDR Section -->
+    <section id="fdr-container">
+      <h2 style="color: #064e3b; font-size: 2rem; margin-bottom: 20px; text-align: center;">Fixture Difficulty Ratings</h2>
+      
+      <div class="fdr-controls">
+        <div class="control-group">
+          <label for="rating-type">Rating Type:</label>
+          <select id="rating-type" onchange="updateFDRDisplay()">
+            <option value="overall">Overall</option>
+            <option value="attack">Attack</option>
+            <option value="defense">Defense</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="fdr-table-container">
+        <iframe 
+          id="fdr-iframe"
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vShThVwR8iGss8Cvzkkhf7C878NZ0uim_eywAIutqpj92jccRyJ50U7Eb8tIdrcv3Q1KkC6wYtlrwPN/pubhtml?gid=0&single=true&widget=true&headers=false" 
+          frameborder="0" 
+          scrolling="yes"
+        ></iframe>
+      </div>
+    </section>
+
+    <!-- xG Probability Distribution Functions Section -->
+    <section id="xg-container">
+      <h2 style="color: #064e3b; font-size: 2rem; margin-bottom: 20px; text-align: center;">
+        xG Probability Distribution Functions
+      </h2>
+      
+      <div class="fdr-controls">
+        <div class="control-group">
+          <label for="team-select">Select Team:</label>
+          <select id="team-select" onchange="updateXGPDF()">
+            <option value="Arsenal">Arsenal</option>
+            <option value="Aston Villa">Aston Villa</option>
+            <option value="Bournemouth">Bournemouth</option>
+            <option value="Brentford">Brentford</option>
+            <option value="Brighton">Brighton</option>
+            <option value="Burnley">Burnley</option>
+            <option value="Chelsea">Chelsea</option>
+            <option value="Crystal Palace">Crystal Palace</option>
+            <option value="Everton">Everton</option>
+            <option value="Fulham">Fulham</option>
+            <option value="Leeds United">Leeds United</option>
+            <option value="Liverpool">Liverpool</option>
+            <option value="Manchester City">Manchester City</option>
+            <option value="Manchester Utd">Manchester Utd</option>
+            <option value="Newcastle Utd">Newcastle Utd</option>
+            <option value="Nottingham Forest">Nottingham Forest</option>
+            <option value="Sunderland">Sunderland</option>
+            <option value="Tottenham">Tottenham</option>
+            <option value="West Ham">West Ham</option>
+            <option value="Wolves">Wolves</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="xg-table-container">
+        <iframe 
+          id="xg-iframe"
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSmPzoWoTbubQbzs2rJkyfalJ0uDwVYW62_umcmTZvU1VQyrRZ6mOd3AqQMUAtuToafTaOU0N193xEc/pubhtml?gid=0&single=true&widget=true&headers=false" 
+          frameborder="0" 
+          scrolling="yes"
+        ></iframe>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function scrollToSection(sectionId) {
+      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function updateFDRDisplay() {
+      const ratingType = document.getElementById('rating-type').value;
+      let gid;
+      switch(ratingType) {
+        case 'attack': gid = '0'; break; // Update with real GID
+        case 'defense': gid = '1699662848'; break;
+        default: gid = '402499405';
+      }
+      const baseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vShThVwR8iGss8Cvzkkhf7C878NZ0uim_eywAIutqpj92jccRyJ50U7Eb8tIdrcv3Q1KkC6wYtlrwPN/pubhtml";
+      const newUrl = `${baseUrl}?gid=${gid}&single=true&widget=true&headers=false&range=A1:AZ100&chrome=false&rm=minimal`;
+      const iframe = document.getElementById('fdr-iframe');
+      iframe.src = newUrl;
+      iframe.style.opacity = '0.7';
+      setTimeout(() => iframe.style.opacity = '1', 500);
+    }
+
+    function updateXGPDF() {
+      const team = document.getElementById('team-select').value;
+      let gid;
+      switch(team) {
+        case 'Arsenal': gid = 0; break;
+        case 'Aston Villa': gid = 54088324; break;
+        case 'Bournemouth': gid = 1464065831; break;
+        case 'Brentford': gid = 1685150890; break;
+        case 'Brighton': gid = 1709263454; break;
+        case 'Burnley': gid = 789654737; break;
+        case 'Chelsea': gid = 661110679; break;
+        case 'Crystal Palace': gid = 234957023; break;
+        case 'Everton': gid = 1184630815; break;
+        case 'Fulham': gid = 1493445951; break;
+        case 'Leeds United': gid = 1453576051; break;
+        case 'Liverpool': gid = 2119021463; break;
+        case 'Manchester City': gid = 65065958; break;
+        case 'Manchester Utd': gid = 1451849783; break;
+        case 'Newcastle Utd': gid = 1932741600; break;
+        case 'Nottingham Forest': gid = 713327531; break;
+        case 'Sunderland': gid = 156191481; break;
+        case 'Tottenham': gid = 742133747; break;
+        case 'West Ham': gid = 279286301; break;
+        case 'Wolves': gid = 1097552279; break;
+        default: gid = 0;
+      }
+      const baseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmPzoWoTbubQbzs2rJkyfalJ0uDwVYW62_umcmTZvU1VQyrRZ6mOd3AqQMUAtuToafTaOU0N193xEc/pubhtml";
+      const newUrl = `${baseUrl}?gid=${gid}&single=true&widget=true&headers=false&range=A1:AZ100&chrome=false&rm=minimal`;
+      const iframe = document.getElementById('xg-iframe');
+      iframe.src = newUrl;
+      iframe.style.opacity = '0.7';
+      setTimeout(() => iframe.style.opacity = '1', 500);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateFDRDisplay();
+      updateXGPDF();
+    });
+  </script>
+
+</body>
+</html>
