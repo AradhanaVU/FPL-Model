@@ -257,9 +257,12 @@
         <div class="control-group">
           <label for="rating-type">Rating Type:</label>
           <select id="rating-type" onchange="updateFDRDisplay()">
-            <option value="overall">Overall</option>
-            <option value="attack">Attack</option>
-            <option value="defense">Defense</option>
+            <option value="attack-fixture">Attack - Fixture</option>
+            <option value="defense-fixture">Defense - Fixture</option>
+            <option value="overall-fixture" selected>Overall - Fixture</option>
+            <option value="attack-raw">Attack - Raw</option>
+            <option value="defense-raw">Defense - Raw</option>
+            <option value="overall-raw">Overall - Raw</option>
           </select>
         </div>
       </div>
@@ -267,7 +270,7 @@
       <div id="fdr-table-container">
         <iframe 
           id="fdr-iframe"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vShThVwR8iGss8Cvzkkhf7C878NZ0uim_eywAIutqpj92jccRyJ50U7Eb8tIdrcv3Q1KkC6wYtlrwPN/pubhtml?gid=0&single=true&widget=true&headers=false" 
+          src=""
           frameborder="0" 
           scrolling="yes"
         ></iframe>
@@ -328,10 +331,15 @@
       const ratingType = document.getElementById('rating-type').value;
       let gid;
       switch(ratingType) {
-        case 'attack': gid = '0'; break; // Update with real GID
-        case 'defense': gid = '1699662848'; break;
-        default: gid = '402499405';
+        case 'attack-fixture': gid = '0'; break;
+        case 'defense-fixture': gid = '1699662848'; break;
+        case 'overall-fixture': gid = '402499405'; break;
+        case 'attack-raw': gid = '530027237'; break;
+        case 'defense-raw': gid = '1599227375'; break;
+        case 'overall-raw': gid = '1341546763'; break;
+        default: gid = '402499405'; 
       }
+
       const baseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vShThVwR8iGss8Cvzkkhf7C878NZ0uim_eywAIutqpj92jccRyJ50U7Eb8tIdrcv3Q1KkC6wYtlrwPN/pubhtml";
       const newUrl = `${baseUrl}?gid=${gid}&single=true&widget=true&headers=false&range=A1:AZ100&chrome=false&rm=minimal`;
       const iframe = document.getElementById('fdr-iframe');
@@ -375,11 +383,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      updateFDRDisplay();
+      updateFDRDisplay(); // loads Overall - Fixture first (default selected)
       updateXGPDF();
     });
   </script>
 
 </body>
 </html>
-F
