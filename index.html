@@ -128,7 +128,8 @@
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
     }
     #fdr-table-container,
-    #xg-table-container {
+    #xg-table-container,
+    #extra-table-container {
       position: relative;
       background: white;
       border-radius: 15px;
@@ -232,6 +233,7 @@
       <button onclick="scrollToSection('about-us')">About Us</button>
       <button onclick="scrollToSection('fdr-container')">FDR</button>
       <button onclick="scrollToSection('xg-container')">xG PDFs</button>
+      <button onclick="scrollToSection('extra-container')">Additional Data</button>
       <button onclick="window.open('https://instagram.com/ploracles', '_blank')">Instagram</button>
     </nav>
   </header>
@@ -320,6 +322,22 @@
         ></iframe>
       </div>
     </section>
+
+    <!-- Additional Data Section -->
+    <section id="extra-container">
+      <h2 style="color: #064e3b; font-size: 2rem; margin-bottom: 20px; text-align: center;">
+        Additional Data
+      </h2>
+
+      <div id="extra-table-container">
+        <iframe 
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTKsPBLYJFFz_gYIwvmkdUfC_WM9wgaOcdLMDpCkLL6o3zlgmjVIcRVIfQX0sA0uIR4_Mn2tVXuQCKH/pubhtml?gid=0&single=true&widget=true&headers=false" 
+          frameborder="0" 
+          scrolling="yes"
+        ></iframe>
+      </div>
+    </section>
+
   </main>
 
   <script>
